@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOSTOEVSKY — Into the Mind</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Prompt:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box} body{margin:0;background:#090909;color:#eee;font-family:Prompt,Arial,sans-serif;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0%,#36101055,transparent 45%),linear-gradient(#0000,#0008);z-index:-1}
+.container{width:min(1000px,92%);margin:auto}.screen{display:none;min-height:100vh;padding:55px 0}.screen.active{display:flex;flex-direction:column;justify-content:center}
+.kicker{letter-spacing:5px;color:#b9b0a3;font-size:13px}.title{font-family:"Cormorant Garamond",serif;font-size:clamp(58px,10vw,105px);line-height:.8;margin:18px 0 12px;text-transform:uppercase}
+.subtitle{color:#b5aaa0;font-family:"Cormorant Garamond",serif;font-size:25px;font-style:italic}.line{width:90px;height:3px;background:#a52a2a;margin:25px 0}
+.btn{border:1px solid #7d2929;background:#160d0d;color:#fff;padding:14px 25px;border-radius:3px;cursor:pointer;font:600 15px Prompt;transition:.2s}.btn:hover{background:#702020;transform:translateY(-2px)}.btn.secondary{border-color:#444;background:#151515}
+.menu{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.note{color:#8d8781;font-size:13px;margin-top:18px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}.progress{height:5px;background:#222}.progress i{display:block;height:100%;background:#a52a2a;width:0}
+.meta{color:#aaa;font-size:13px}.question{font-family:"Cormorant Garamond",serif;font-size:40px;line-height:1.1;margin:28px 0}.answers{display:grid;grid-template-columns:1fr 1fr;gap:12px}.answer{text-align:left;padding:18px;border:1px solid #353535;background:#121212;color:#eee;border-radius:3px;cursor:pointer;font:500 15px Prompt}.answer:hover{border-color:#9d3030}.answer.correct{border-color:#6b9d6b;background:#112011}.answer.wrong{border-color:#9d4545;background:#241010}.explain{display:none;margin-top:18px;padding:15px;border-left:3px solid #a52a2a;background:#141111;color:#c9c2bb;font-size:14px}.next{display:none;margin-top:18px}
+.resultbox{border:1px solid #332020;background:#100b0b;padding:40px;text-align:center}.score{font-family:"Cormorant Garamond";font-size:82px;color:#c44747}.rank{font-size:22px;letter-spacing:2px}.factgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:25px 0}.fact{padding:18px;background:#111;border:1px solid #292929}.fact b{display:block;font-family:"Cormorant Garamond";font-size:28px;color:#d6c8ba}.sources{color:#aaa;font-size:13px;line-height:1.8}.sources a{color:#d58c8c}
+@media(max-width:650px){.answers{grid-template-columns:1fr}.question{font-size:32px}.factgrid{grid-template-columns:1fr}.screen{padding:30px 0}}
+</style>
+</head>
+<body>
+<section id="home" class="screen active"><div class="container">
+<div class="kicker">LITERATURE • PSYCHOLOGY • RUSSIA</div>
+<div class="title">Dostoevsky</div><div class="subtitle">Into the Mind</div><div class="line"></div>
+<p>เกมตอบคำถามที่จะพาคุณเข้าไปสำรวจชีวิต ผลงาน และโลกความคิดของฟีโอดอร์ ดอสโตเยฟสกี</p>
+<div class="menu"><button class="btn" onclick="start()">เริ่มเกม</button><button class="btn secondary" onclick="show('about')">เกี่ยวกับเกม</button></div>
+<div class="note">25 QUESTIONS • FREE • PLAY ANYTIME</div>
+</div></section>
+
+<section id="about" class="screen"><div class="container">
+<div class="kicker">ABOUT THE GAME</div><h2 class="question">ทำไมต้อง Dostoevsky?</h2>
+<p>ดอสโตเยฟสกีเป็นนักเขียนรัสเซียในศตวรรษที่ 19 ผู้มีผลงานสำคัญ เช่น <i>Crime and Punishment</i>, <i>The Idiot</i> และ <i>The Brothers Karamazov</i> งานของเขาสำรวจสภาพมนุษย์ ประเด็นทางสังคม การเมือง จิตวิทยา ปรัชญา และศาสนา</p>
+<div class="factgrid"><div class="fact"><b>1821</b>ปีเกิด</div><div class="fact"><b>1881</b>ปีเสียชีวิต</div><div class="fact"><b>25</b>คำถาม</div></div>
+<p class="sources">ตรวจสอบข้อมูลจาก Encyclopaedia Britannica และแหล่งข้อมูลชีวประวัติที่อ้างอิงด้านล่าง</p>
+<div class="menu"><button class="btn" onclick="start()">เริ่มเกม</button><button class="btn secondary" onclick="show('home')">กลับ</button></div>
+</div></section>
+
+<section id="quiz" class="screen"><div class="container">
+<div class="top"><span class="meta" id="counter">QUESTION 1 / 25</span><span class="meta" id="points">SCORE 0</span></div>
+<div class="progress"><i id="bar"></i></div>
+<div id="q"></div><div class="answers" id="answers"></div><div class="explain" id="explain"></div>
+<button class="btn next" id="next" onclick="nextQuestion()">คำถามถัดไป →</button>
+</div></section>
+
+<section id="result" class="screen"><div class="container"><div class="resultbox">
+<div class="kicker">YOUR RESULT</div><div class="score" id="finalScore">0 / 25</div><div class="rank" id="rank"></div>
+<p id="comment"></p>
+<div class="menu" style="justify-content:center"><button class="btn" onclick="start()">เล่นอีกครั้ง</button><button class="btn secondary" onclick="show('sources')">แหล่งข้อมูล</button></div>
+</div></div></section>
+
+<section id="sources" class="screen"><div class="container">
+<div class="kicker">SOURCES & REFERENCES</div><h2 class="question">ตรวจสอบข้อมูล</h2>
+<div class="sources">
+<p><b>Encyclopaedia Britannica — Fyodor Dostoyevsky</b><br>
+ข้อมูลชีวประวัติ ผลงาน และบริบททางวรรณกรรม<br>
+<a href="https://www.britannica.com/biography/Fyodor-Dostoyevsky" target="_blank">britannica.com/biography/Fyodor-Dostoyevsky</a></p>
+<p><b>Wikipedia — Fyodor Dostoevsky</b><br>
+ใช้สำหรับตรวจสอบรายการผลงานและข้อมูลพื้นฐานเพิ่มเติม<br>
+<a href="https://en.wikipedia.org/wiki/Fyodor_Dostoevsky" target="_blank">en.wikipedia.org/wiki/Fyodor_Dostoevsky</a></p>
+</div>
+<div class="menu"><button class="btn" onclick="show('home')">หน้าหลัก</button></div>
+</div></section>
+
+<script>
+const questions=[
+["Dostoevsky เกิดในเมืองใด?",["มอสโก","เซนต์ปีเตอร์สเบิร์ก","เคียฟ","วอร์ซอ"],0,"เขาเกิดที่มอสโกในปี 1821"],
+["Dostoevsky เกิดในปีใด?",["1818","1821","1825","1830"],1,"เขาเกิดในปี 1821"],
+["Dostoevsky เป็นนักเขียนของประเทศใด?",["ฝรั่งเศส","เยอรมนี","รัสเซีย","อังกฤษ"],2,"เขาเป็นนักเขียนชาวรัสเซีย"],
+["ผลงานใดเป็นนวนิยายของ Dostoevsky?",["Crime and Punishment","The Great Gatsby","Dracula","The Old Man and the Sea"],0,"Crime and Punishment ตีพิมพ์ในปี 1866"],
+["ตัวเอกของ Crime and Punishment คือใคร?",["Ivan Karamazov","Rodion Raskolnikov","Prince Myshkin","Alyosha Karamazov"],1,"Rodion Raskolnikov เป็นตัวเอกของเรื่อง"],
+["The Brothers Karamazov กล่าวถึงครอบครัวใด?",["Karamazov","Bennet","Bulgakov","Romanov"],0,"ชื่อเรื่องหมายถึงพี่น้องตระกูล Karamazov"],
+["The Idiot ตีพิมพ์ครั้งแรกในช่วงใด?",["1868–1869","1846–1847","1879–1880","1890–1891"],0,"The Idiot ตีพิมพ์ในปี 1868–1869"],
+["Notes from Underground เป็นผลงานประเภทใด?",["นวนิยายสั้น/novella","บทละคร","บทกวี","สารคดีท่องเที่ยว"],0,"เป็น novella ที่ตีพิมพ์ในปี 1864"],
+["Dostoevsky เสียชีวิตในปีใด?",["1879","1881","1891","1901"],1,"เขาเสียชีวิตที่เซนต์ปีเตอร์สเบิร์กในปี 1881"],
+["ก่อนถูกส่งไปไซบีเรีย Dostoevsky เคยถูกตัดสินอย่างไร?",["จำคุกตลอดชีวิตทันที","ประหารชีวิตก่อนลดโทษ","เนรเทศทันที","ปรับเงิน"],1,"เขาถูกตัดสินประหารชีวิตและได้รับการลดโทษในนาทีสุดท้าย"],
+["เขาถูกส่งไปไซบีเรียจากการเกี่ยวข้องกับกลุ่มใด?",["Petrashevsky Circle","Bloomsbury Group","Beat Generation","Bauhaus"],0,"เขาเกี่ยวข้องกับ Petrashevsky Circle"],
+["เขาใช้เวลารับโทษในคุกที่ไซบีเรียประมาณกี่ปี?",["1 ปี","4 ปี","8 ปี","12 ปี"],1,"เขารับโทษแรงงานหนักในไซบีเรียเป็นเวลา 4 ปี"],
+["ผลงานใดมีชื่อไทยโดยทั่วไปว่า 'อาชญากรรมกับการลงทัณฑ์'?",["The Idiot","Crime and Punishment","Demons","The Gambler"],1,"Crime and Punishment คือผลงานที่รู้จักกันอย่างกว้างขวาง"],
+["Demons มีชื่อภาษาอังกฤษอีกแบบว่าอะไร?",["The Devils","The Prisoners","The Dreamers","The Brothers"],0,"Demons เป็นชื่อแปลที่พบได้อีกแบบว่า The Devils"],
+["ผลงานใดเป็นงานกึ่งอัตชีวประวัติเกี่ยวกับประสบการณ์ในคุก?",["The House of the Dead","White Nights","The Idiot","Poor Folk"],0,"The House of the Dead เชื่อมโยงกับประสบการณ์คุมขังของเขา"],
+["นวนิยายเรื่องแรกของ Dostoevsky คืออะไร?",["Poor Folk","The Idiot","Demons","The Gambler"],0,"Poor Folk (Poor People) ตีพิมพ์ในปี 1846"],
+["Poor Folk ตีพิมพ์ในปีใด?",["1839","1846","1858","1866"],1,"ผลงานนี้ตีพิมพ์ในปี 1846"],
+["Dostoevsky เสียชีวิตที่เมืองใด?",["มอสโก","โอเดสซา","เซนต์ปีเตอร์สเบิร์ก","คาซาน"],2,"เขาเสียชีวิตที่เซนต์ปีเตอร์สเบิร์ก"],
+["งานของ Dostoevsky มักสำรวจสิ่งใด?",["สภาพมนุษย์และประเด็นปรัชญา","การทำอาหาร","ดาราศาสตร์อย่างเดียว","คู่มือทหาร"],0,"งานของเขาสำรวจมนุษย์ในบริบททางการเมือง สังคม และจิตวิญญาณ"],
+["เขาเขียนในช่วงศตวรรษใดเป็นหลัก?",["17","18","19","20"],2,"ผลงานสำคัญส่วนใหญ่เกิดขึ้นในศตวรรษที่ 19"],
+["ผลงานใดตีพิมพ์ในปี 1880?",["The Brothers Karamazov","Poor Folk","Notes from Underground","The Double"],0,"The Brothers Karamazov ตีพิมพ์ในปี 1879–1880"],
+["Dostoevsky มีอาชีพใดนอกเหนือจากนักเขียน?",["วิศวกรทหาร","นักบิน","นักชีววิทยา","จิตรกร"],0,"เขาเคยศึกษาที่สถาบันวิศวกรรมทหารและทำงานด้านทหาร"],
+["ผลงานใดตีพิมพ์ในปี 1864?",["Notes from Underground","Crime and Punishment","The Idiot","Demons"],0,"Notes from Underground ตีพิมพ์ในปี 1864"],
+["Dostoevsky เป็นที่รู้จักในด้านการสำรวจตัวละครแบบใด?",["จิตวิทยาและความขัดแย้งภายใน","ตัวละครแฟนตาซีอย่างเดียว","สารคดีสัตว์","คู่มือวิทยาศาสตร์"],0,"งานของเขาโดดเด่นด้านการสำรวจจิตใจมนุษย์และความขัดแย้งทางศีลธรรม"],
+["ข้อใดเป็นผลงานสำคัญของ Dostoevsky ทั้งหมด?",["The Idiot, Crime and Punishment, The Brothers Karamazov","Hamlet, Macbeth, Othello","1984, Animal Farm, Emma","Dracula, Frankenstein, Dune"],0,"ทั้งสามเรื่องเป็นผลงานสำคัญของ Dostoevsky"]
+];
+let index=0,score=0,answered=false;
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
+function start(){index=0;score=0;show('quiz');render()}
+function render(){
+ answered=false;const [text,opts,correct,exp]=questions[index];
+ document.getElementById('counter').textContent=`QUESTION ${index+1} / ${questions.length}`;
+ document.getElementById('points').textContent=`SCORE ${score}`;
+ document.getElementById('bar').style.width=((index)/questions.length*100)+'%';
+ document.getElementById('q').innerHTML=`<div class="question">${text}</div>`;
+ const box=document.getElementById('answers');box.innerHTML='';
+ opts.forEach((o,i)=>{const b=document.createElement('button');b.className='answer';b.textContent=String.fromCharCode(65+i)+". "+o;b.onclick=()=>answer(i,b,correct,exp);box.appendChild(b)});
+ document.getElementById('explain').style.display='none';document.getElementById('next').style.display='none';
+}
+function answer(choice,btn,correct,exp){
+ if(answered)return;answered=true;
+ document.querySelectorAll('.answer').forEach((b,i)=>{b.disabled=true;if(i===correct)b.classList.add('correct')});
+ if(choice===correct)score++;else btn.classList.add('wrong');
+ document.getElementById('points').textContent=`SCORE ${score}`;
+ document.getElementById('explain').innerHTML=(choice===correct?"✓ ถูกต้อง! ":"✗ ยังไม่ถูก — ")+exp;
+ document.getElementById('explain').style.display='block';document.getElementById('next').style.display='inline-block';
+}
+function nextQuestion(){if(index<questions.length-1){index++;render()}else{finish()}}
+function finish(){
+ show('result');document.getElementById('finalScore').textContent=`${score} / ${questions.length}`;
+ let rank,comment;
+ if(score>=23){rank="THE DOSTOEVSKY EXPERT";comment="คุณเข้าใจทั้งชีวิต ผลงาน และโลกความคิดของ Dostoevsky ได้ยอดเยี่ยมมาก";}
+ else if(score>=18){rank="THE OBSERVER";comment="คุณจับประเด็นสำคัญของโลกของ Dostoevsky ได้ดีมาก";}
+ else if(score>=13){rank="THE READER";comment="พื้นฐานดีแล้ว ลองอ่านผลงานของเขาเพิ่มเติมแล้วกลับมาอีกครั้ง";}
+ else{rank="THE BEGINNER";comment="การเดินทางเพิ่งเริ่มต้น ลองเล่นอีกครั้งและอ่านเกร็ดความรู้หลังแต่ละข้อ";}
+ document.getElementById('rank').textContent=rank;document.getElementById('comment').textContent=comment;
+}
+</script>
+</body>
+</html>
